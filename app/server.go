@@ -34,7 +34,7 @@ func createWaveWithSapi(message string, voiceIndex string, sapiId string) bool {
     }
 
     // create wave
-    cmd := exec.Command("CScript", "//nologo", ".\\create_sapi.js", storagePath(sapiId), voiceIndex);
+    cmd := exec.Command("CScript", "//nologo", currentSourcePath() +"\\create_sapi.js", storagePath(sapiId), voiceIndex);
     cmd.Stdout = os.Stdout
     cmd.Stderr = os.Stderr
     cmd.Run()
@@ -81,7 +81,7 @@ func sapiHandle(w http.ResponseWriter, r *http.Request) {
 }
 
 func voicesHandle(w http.ResponseWriter, r *http.Request) {
-    cmd       := exec.Command("CScript", "//nologo", ".\\sapi_voices.js")
+    cmd       := exec.Command("CScript", "//nologo", currentSourcePath() + "\\sapi_voices.js")
     output, _ := cmd.Output()
 
     fmt.Fprintf(w, string(output))
