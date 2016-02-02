@@ -94,6 +94,7 @@ func indexHandle(w http.ResponseWriter, r *http.Request) {
 func main(){
     http.HandleFunc("/sapi/create", sapiHandle)
     http.HandleFunc("/sapi/voices", voicesHandle)
+    http.HandleFunc("/", indexHandle)
 
     if err := http.ListenAndServe(":9081", nil); err != nil {
         log.Fatal("ListenAndServe ", err)
