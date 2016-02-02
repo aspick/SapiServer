@@ -87,6 +87,10 @@ func voicesHandle(w http.ResponseWriter, r *http.Request) {
     fmt.Fprintf(w, string(output))
 }
 
+func indexHandle(w http.ResponseWriter, r *http.Request) {
+    http.ServeFile(w, r, currentSourcePath() + "\\index.html")
+}
+
 func main(){
     http.HandleFunc("/sapi/create", sapiHandle)
     http.HandleFunc("/sapi/voices", voicesHandle)

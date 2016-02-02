@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>SAPI Test</title>
+
+        <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.0.js">
+        </script>
+    </head>
+    <body>
+        <h1>SAPI Server Play Test</h1>
+
+        <p>
+            <select id="voices" name="voice_index"></select>
+        </p>
+
+        <p>
+            <textarea id="message" name="message" rows="8" cols="40"></textarea>
+        </p>
+
+        <input type="hidden" name="sapi_id" value="">
+
+        <p>
+            <button type="button" id="submit-button">Get Audio</button>
+        </p>
+
+        <p>
+            <audio id="player" controls></audio>
+        </p>
+    </body>
+
+    <script type="text/javascript">
+$(function(){
+    $.ajax({
+        url: '/sapi/voices',
+        dataType: 'json',
+        method: 'post',
+        success: function(data){
+            for(var i=0; i<data.length; i++){
+                var d = data[i];
+                var opt = $("<option value=\"" + i + "\">" + d.description + "</option>");
+                $("#voices").append(opt);
+            }
+        }
+    });
+
+    $("#submit-button").click(function(){
+        $.ajax({
+            url: 'http://52.68.12.127:9081/sapi/create',
+            dataType: 'binary',
+            method: 'post',
+            data:{
+                voice_index: $("#voices").val(),
+                message: $("#message").val(),
+                sapi_id: 'test'
+            },
+            beforeSend: function(xhr){
+                xhr.overrideMimeType("text/plain; charset=x-user-defined");
+            },
+            converters: {"* binary": function(response){
+                var bytes = [];
+                var adjustedResponse = '';
+                for(var i=0; i<response.length;i++){
+                    bytes[i] = response.charCodeAt(i) & 0xff;
+                    adjustedResponse += String.fromCharCode(bytes[i]);
+                }
+                return adjustedResponse;
+            }},
+            success: function(data, status, xhr){
+                var base64 = window.btoa(data);
+                var player = $("#player");
+                player.attr("src", "data:audio/wave;base64,"+base64);
+                player[0].play();
+            }
+        })
+    });
+});
+    </script>
+</html>
