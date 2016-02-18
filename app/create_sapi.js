@@ -14,10 +14,14 @@ stream.open(storage_path + ".wav", 3);
 tts.AudioOutputStream = stream;
 tts.Voice = tts.GetVoices().Item(voice_index);
 
-var fs      = new ActiveXObject("Scripting.FileSystemObject");
-var file    = fs.OpenTextFile(storage_path + ".txt", 1, true, 0);
-var message = file.ReadAll();
-file.Close();
+var sr      = new ActiveXObject("ADODB.Stream");
+sr.Type     = 2     // text mode
+sr.charset  = "utf-8";
+sr.Open();
+sr.LoadFromFile(storage_path + ".txt");
+
+var message = sr.ReadText(-1);  // all line
+sr.Close();
 fs = null;
 
 if (message.indexOf("</") == -1){
